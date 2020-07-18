@@ -19,23 +19,31 @@ public class ImageProcessServiceImpl implements ImageProcessService {
 	private ImageRecognitionDAO imageRecognitionDAO;
 	
 	@Override
-	public ResponseData fileProcess(MultipartFile file) {
-		ResponseData responseData 		= null;
+	public String fileProcess(String formtype, MultipartFile file) {
 		ImageAnnotation imageAnnotation = null;
 		
+		/*
+		 * 파일을 이미지 어노테이션으로 변환한다.
+		 */
 		System.out.println("▷ imageProcessServiceImpl.fileProcess()");
-		
-		imageAnnotation = imageDetectionDAO.detectImage("image");
+		imageAnnotation = imageDetectionDAO.detectImage(file);
 		if(imageAnnotation == null) {
 			System.out.println("▷ detectImage() failed..");
 			return null;
 		}
 		
-		responseData = imageRecognitionDAO.recognizeImage(imageAnnotation);
-		if(responseData == null) {
-			System.out.println("▷ recognizeImage() failed..");
-			return null;
+		/*
+		 * 이미지 어노테이션을 기반으로 이미지 인식 메소드를 진행
+		 * 이때 파워앱스에서 받은 formtype을 기반으로 이미지 인식을 다르게 할 수 있다.
+		 */
+		
+		String resultString = "";
+		switch(formtype) {
+			case "01": resultString = imageRecognitionDAO.recognizeImage(imageAnnotation); break;
+			case "02": resultString = imageRecognitionDAO.recognizeImage(imageAnnotation); break;
+			case "03": resultString = imageRecognitionDAO.recognizeImage(imageAnnotation); break;
 		}
-		return responseData;
+		
+		return resultString;
 	}
 }
